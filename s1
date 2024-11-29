@@ -1,0 +1,42 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
+using namespace std;
+
+// Function to find the maximum number of times substrings can be removed from the main string
+int dp(string& s, vector<string>& v, unordered_map<string, int>& freq) {
+    if (freq.count(s)) 
+        return freq[s];
+
+    int maxi = 0;
+    for (auto& i : v) {
+        size_t p = s.find(i);  // Find the substring i in s
+        while (p != string::npos) {  // Repeat to remove all occurrences
+            string news = s.substr(0, p) + s.substr(p + i.size());
+            maxi = max(maxi, 1 + dp(news, v, freq));
+            p = s.find(i, p + 1);  // Continue searching after the previous occurrence
+        }
+    }
+
+    return freq[s] = maxi;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<string> substringss(n);
+    for (int i = 0; i < n; i++) {
+        cin >> substringss[i];
+    }
+
+    string mainstring;
+    cin >> mainstring;
+
+    unordered_map<string, int> freq;
+    cout << dp(mainstring, substringss, freq) << endl;
+
+    return 0;
+}
